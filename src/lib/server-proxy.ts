@@ -32,6 +32,22 @@ export function createApiProxy(servicePrefix: string) {
     const body =
       req.method !== "GET" && req.method !== "HEAD" ? await req.arrayBuffer() : undefined;
 
+    const isProduction = process.env.NODE_ENV === "production";
+    const hasValidBackendUrl =
+      process.env.AI_SERVER_URL &&
+      !process.env.AI_SERVER_URL.includes("localhost") &&
+      !process.env.AI_SERVER_URL.includes("127.0.0.1");
+
+    if (isProduction && !hasValidBackendUrl) {
+      return NextResponse.json(
+        {
+          error:
+            "AI backend is not connected. Please add AI_SERVER_URL in your Vercel Project Settings -> Environment Variables pointing to your deployed backend (e.g., Render or Railway).",
+        },
+        { status: 503 }
+      );
+    }
+
     try {
       const res = await fetch(targetUrl, {
         method: req.method,
