@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --background: #F8FAFC;
+    --foreground: #172033;
+    --primary: #635BFF;
+    --primary-hover: #5348E8;
+    --primary-light: #EEF0FF;
+    --sidebar: #FFFFFF;
+    --text-primary: #172033;
+    --text-muted: #64748B;
+    --border-color: #E2E8F0;
+    --success: #16A34A;
+    --warning: #F59E0B;
+    --error: #DC2626;
+  }
+
+  html.dark,
+  html[data-theme="dark"] {
+    --background: #0B0F19;
+    --foreground: #F8FAFC;
+    --primary: #635BFF;
+    --primary-hover: #7C75FF;
+    --primary-light: rgba(99, 91, 255, 0.18);
+    --sidebar: #111827;
+    --text-primary: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border-color: #1F2937;
+    --success: #22C55E;
+    --warning: #FBBF24;
+    --error: #EF4444;
+  }
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #635BFF;
+  --color-primary-hover: #5348E8;
+  --color-primary-light: #EEF0FF;
+  --color-sidebar: var(--sidebar);
+  --color-brand-text: var(--text-primary);
+  --color-brand-muted: var(--text-muted);
+  --color-brand-border: var(--border-color);
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* =========================================================
+   DARK THEME SYSTEM OVERRIDES
+   ========================================================= */
+
+html.dark,
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html.dark body,
+html[data-theme="dark"] body {
+  background-color: #0B0F19 !important;
+  color: #F8FAFC !important;
+}
+
+/* Dark surfaces: Backgrounds */
+html.dark [class*="bg-[#F8FAFC]"],
+html[data-theme="dark"] [class*="bg-[#F8FAFC]"] {
+  background-color: #0B0F19 !important;
+}
+
+html.dark [class*="bg-white"],
+html[data-theme="dark"] [class*="bg-white"] {
+  background-color: #111827 !important;
+}
+
+html.dark [class*="bg-slate-50"],
+html[data-theme="dark"] [class*="bg-slate-50"] {
+  background-color: #161F30 !important;
+}
+
+html.dark [class*="bg-slate-100"],
+html[data-theme="dark"] [class*="bg-slate-100"] {
+  background-color: #1F2937 !important;
+}
+
+html.dark [class*="hover:bg-slate-100"]:hover,
+html[data-theme="dark"] [class*="hover:bg-slate-100"]:hover {
+  background-color: #1F2937 !important;
+}
+
+html.dark [class*="hover:bg-slate-50"]:hover,
+html[data-theme="dark"] [class*="hover:bg-slate-50"]:hover {
+  background-color: #161F30 !important;
+}
+
+/* Dark surfaces: Texts */
+html.dark [class*="text-[#172033]"],
+html[data-theme="dark"] [class*="text-[#172033]"] {
+  color: #F8FAFC !important;
+}
+
+html.dark [class*="text-[#64748B]"],
+html[data-theme="dark"] [class*="text-[#64748B]"] {
+  color: #94A3B8 !important;
+}
+
+html.dark [class*="text-slate-600"],
+html.dark [class*="text-slate-500"],
+html[data-theme="dark"] [class*="text-slate-600"],
+html[data-theme="dark"] [class*="text-slate-500"] {
+  color: #94A3B8 !important;
+}
+
+html.dark [class*="text-slate-400"],
+html[data-theme="dark"] [class*="text-slate-400"] {
+  color: #64748B !important;
+}
+
+html.dark [class*="hover:text-[#172033]"]:hover,
+html[data-theme="dark"] [class*="hover:text-[#172033]"]:hover {
+  color: #FFFFFF !important;
+}
+
+/* Dark surfaces: Borders */
+html.dark [class*="border-[#E2E8F0]"],
+html[data-theme="dark"] [class*="border-[#E2E8F0]"] {
+  border-color: #1F2937 !important;
+}
+
+html.dark [class*="border-slate-100"],
+html.dark [class*="border-slate-200"],
+html[data-theme="dark"] [class*="border-slate-100"],
+html[data-theme="dark"] [class*="border-slate-200"] {
+  border-color: #1F2937 !important;
+}
+
+html.dark [class*="divide-[#E2E8F0]"] > :not([hidden]) ~ :not([hidden]),
+html[data-theme="dark"] [class*="divide-[#E2E8F0]"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1F2937 !important;
+}
+
+/* Header & Sidebar Structure */
+html.dark header,
+html[data-theme="dark"] header {
+  background-color: #111827 !important;
+  border-color: #1F2937 !important;
+}
+
+html.dark aside,
+html[data-theme="dark"] aside {
+  background-color: #111827 !important;
+  border-color: #1F2937 !important;
+}
+
+/* Inputs, Selects & Forms */
+html.dark input:not([type="checkbox"]):not([type="radio"]),
+html.dark select,
+html.dark textarea,
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  background-color: #161F30 !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder,
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #64748B !important;
+}
+
+html.dark input:disabled,
+html.dark select:disabled,
+html.dark textarea:disabled,
+html[data-theme="dark"] input:disabled,
+html[data-theme="dark"] select:disabled,
+html[data-theme="dark"] textarea:disabled {
+  background-color: #111827 !important;
+  color: #64748B !important;
+  border-color: #1F2937 !important;
+}
+
+/* Dropdowns & Cards */
+html.dark .shadow-lg,
+html.dark .shadow-md,
+html.dark .shadow-xs,
+html[data-theme="dark"] .shadow-lg,
+html[data-theme="dark"] .shadow-md,
+html[data-theme="dark"] .shadow-xs {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+html.dark ::-webkit-scrollbar-thumb,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

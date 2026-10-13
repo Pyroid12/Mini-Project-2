@@ -1,0 +1,299 @@
+// ============================================================
+// CareerBuddy AI - Prisma Schema (Phase 3)
+// Target: Supabase PostgreSQL
+// Authentication: Clerk (userId links directly to Clerk user.id)
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// Core User table - mirror of each Clerk-authenticated user
+// Primary key = clerkUserId (from Clerk's user.id -> stable UUID)
+// NEVER store passwords here — Clerk owns authentication.
+// ============================================================
+model User {
+  clerkUserId      String   @id
+  email            String   @unique
+  fullName         String?
+  firstName        String?
+  lastName         String?
+  imageUrl         String?
+
+  isDemoUser       Boolean  @default(false)
+  isBanned         Boolean  @default(false)
+
+  profile          StudentProfile?
+  resumeAnalyses   ResumeAnalysis[]
+  careerRoadmaps   CareerRoadmap[]
+  linkedinAnalyses LinkedInAnalysis[]
+  githubAnalyses   GitHubAnalysis[]
+  leetcodeProgress LeetCodeProgress[]
+  placementReadiness PlacementReadinessResult[]
+  careerInsights   CareerInsightResult[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isDemoUser])
+  @@index([email])
+}
+
+// ============================================================
+// Student Profile - extended academic & career data
+// One-to-one relationship with User (clerkUserId as FK + PK)
+// ============================================================
+model StudentProfile {
+  clerkUserId          String   @id
+  user                 User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  college              String?
+  degree               String?
+  branch               String?
+  currentAcademicYear  String?
+  graduationYear       String?
+  careerGoal           String?
+  technicalSkills      String[] @default([])
+  githubUsername       String?
+  linkedinUrl          String?
+  leetcodeUsername     String?
+
+  completionPercentage Int      @default(0)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// ============================================================
+// Resume Analysis - stored ATS-style evaluation results
+// One-to-many relationship with User
+// ============================================================
+model ResumeAnalysis {
+  id                 String   @id @default(cuid())
+  clerkUserId        String
+  user               User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  fileName           String
+  fileType           String
+  fileSize           Int
+  atsScore           Int
+  summary            String
+  strengths          String[]
+  weaknesses         String[]
+  missingSkills      String[]
+  recommendations    String[]
+  suggestedKeywords  String[]
+  experienceTips     String[]
+  projectTips        String[]
+  targetRole         String?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Career Roadmap - AI-generated personalized learning path
+// One-to-many relationship with User
+// ============================================================
+model CareerRoadmap {
+  id              String         @id @default(cuid())
+  clerkUserId     String
+  user            User           @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  roleTitle       String
+  roleId          String
+  description     String
+  difficulty      String
+  estimatedTime   String
+  isActive        Boolean        @default(true)
+
+  phases          RoadmapPhase[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([clerkUserId])
+  @@index([isActive])
+}
+
+// ============================================================
+// Roadmap Phase - individual phase within a Career Roadmap
+// ============================================================
+model RoadmapPhase {
+  id              String   @id @default(cuid())
+  roadmapId       String
+  roadmap         CareerRoadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+
+  phaseIndex      Int
+  title           String
+  description     String
+  duration        String
+  skills          String[]
+  projects        String[]
+  practiceTasks   String[] @default([])
+  milestones      String[]
+  resources       String[]
+  status          String   @default("upcoming")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([roadmapId])
+}
+
+// ============================================================
+// LinkedIn Analysis - stored profile evaluation results
+// One-to-many relationship with User
+// ============================================================
+model LinkedInAnalysis {
+  id                    String   @id @default(cuid())
+  clerkUserId           String
+  user                  User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  headline              String
+  about                 String
+  skills                String[]
+  experience            String
+  projects              String
+  profileUrl            String?
+
+  suggestedHeadline     String
+  suggestedAbout        String   @default("")
+  suggestedExperience   String   @default("")
+  suggestedProjects     String   @default("")
+  aboutRecommendations  String[]
+  skillGapRecommendations String[]
+  experienceTips        String[]
+  projectTips           String[]
+  actionRecommendations String[]
+  profileMatchScore     Int
+  fullAnalysis          Json?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// GitHub Profile Analysis (Phase 4)
+// One-to-many relationship with User
+// ============================================================
+model GitHubAnalysis {
+  id                 String   @id @default(cuid())
+  clerkUserId        String
+  user               User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  username           String
+  avatarUrl          String?
+  bio                String?
+  publicRepos        Int      @default(0)
+  followers          Int      @default(0)
+  following          Int      @default(0)
+  totalStars         Int      @default(0)
+  totalForks         Int      @default(0)
+  languages          Json     @default("[]")
+  topRepos           Json     @default("[]")
+  inferredSkills     String[] @default([])
+  qualitySuggestions String[] @default([])
+  recommendedSteps   String[] @default([])
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// LeetCode Progress Tracking (Phase 4)
+// One-to-many relationship with User
+// ============================================================
+model LeetCodeProgress {
+  id                 String    @id @default(cuid())
+  clerkUserId        String
+  user               User      @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  username           String
+  totalSolved        Int       @default(0)
+  easySolved         Int       @default(0)
+  mediumSolved       Int       @default(0)
+  hardSolved         Int       @default(0)
+  ranking            Int?
+  streak             Int       @default(0)
+  dailyGoalTarget    Int       @default(3)
+  dailyGoalCurrent   Int       @default(0)
+  weeklyGoalTarget   Int       @default(20)
+  weeklyGoalCurrent  Int       @default(0)
+  weeklyHistory      Json?
+  problemEntries     Json?
+  recentSubmissions  Json?
+  acceptanceRate     String?
+  totalSubmissions   Int?
+  source             String    @default("manual") // "synced" or "manual"
+  lastSyncedAt       DateTime?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Placement Readiness Result (Phase 4)
+// One-to-many relationship with User
+// ============================================================
+model PlacementReadinessResult {
+  id                 String   @id @default(cuid())
+  clerkUserId        String
+  user               User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  overallScore       Int
+  resumeScore        Int
+  skillsScore        Int
+  roadmapScore       Int
+  codingScore        Int
+  githubScore        Int
+  assessmentConfidence String @default("Medium")
+  breakdown          Json
+  factors            Json
+  companyTiers       Json
+  recommendedActions Json
+
+  createdAt          DateTime @default(now())
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Career Insights Result (Phase 4)
+// One-to-many relationship with User
+// ============================================================
+model CareerInsightResult {
+  id                 String   @id @default(cuid())
+  clerkUserId        String
+  user               User     @relation(fields: [clerkUserId], references: [clerkUserId], onDelete: Cascade)
+
+  missingSkills      String[]
+  roadmapInsights    String[]
+  projectAdvice      String[]
+  codingPracticeAreas String[]
+  overallActionPlan  String[]
+  guidanceDisclaimer String
+
+  createdAt          DateTime @default(now())
+
+  @@index([clerkUserId])
+  @@index([createdAt])
+}
