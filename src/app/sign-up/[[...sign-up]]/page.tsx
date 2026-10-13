@@ -48,16 +48,22 @@ export default function SignUpPage() {
               Create Your CareerBuddy Account
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Join engineering students preparing for top campus placements
+              Sign up with your Google account to get started with placement preparation
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl p-4 sm:p-6 overflow-hidden">
+          <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl p-6 sm:p-8 overflow-hidden">
+            <div className="mb-4 text-center">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#635BFF]">
+                Single Sign-On
+              </span>
+            </div>
             <SignUp
               path="/sign-up"
               routing="path"
               signInUrl="/sign-in"
               fallbackRedirectUrl="/dashboard"
+              forceRedirectUrl="/dashboard"
               appearance={{
                 variables: {
                   colorPrimary: "#635BFF",
@@ -70,27 +76,28 @@ export default function SignUpPage() {
                   header: "hidden",
                   headerTitle: "hidden",
                   headerSubtitle: "hidden",
+                  form: "hidden",
+                  formFieldRow: "hidden",
+                  formButtonPrimary: "hidden",
+                  dividerRow: "hidden",
+                  dividerLine: "hidden",
+                  dividerText: "hidden",
+                  footer: "hidden",
+                  footerAction: "hidden",
                   socialButtonsBlockButton:
-                    "w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800 rounded-xl transition-colors flex items-center justify-center gap-3 shadow-xs",
-                  socialButtonsBlockButtonText: "font-semibold text-xs sm:text-sm",
-                  formButtonPrimary:
-                    "w-full py-2.5 px-4 bg-[#635BFF] hover:bg-[#5348E8] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-[#635BFF]/25 flex items-center justify-center",
-                  formFieldInput:
-                    "w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF]",
-                  formFieldLabel: "block text-xs font-semibold text-slate-700 mb-1",
-                  dividerLine: "border-t border-slate-200",
-                  dividerText: "text-slate-400 text-xs font-medium",
-                  footerActionLink: "text-[#635BFF] font-semibold hover:underline text-xs",
-                  footerActionText: "text-slate-500 text-xs",
+                    "w-full py-3.5 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-white rounded-xl transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md cursor-pointer",
+                  socialButtonsBlockButtonText:
+                    "font-semibold text-sm text-slate-800 dark:text-white",
+                  socialButtonsProviderIcon: "w-5 h-5",
                 },
               }}
             />
           </div>
 
-          <div className="pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+          <div className="pt-2 text-center text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             Already have an account?{" "}
             <Link href="/sign-in" className="text-[#635BFF] font-semibold hover:underline">
-              Sign in here
+              Sign in with Google
             </Link>
           </div>
         </div>

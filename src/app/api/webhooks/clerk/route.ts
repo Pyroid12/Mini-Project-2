@@ -51,10 +51,7 @@ export async function POST(request: Request) {
       data.email_addresses[0]?.email_address ??
       "unknown@example.com";
 
-    const isDemoUser =
-      Boolean(data.public_metadata?.isDemoUser) ||
-      Boolean(data.private_metadata?.isDemoUser) ||
-      primaryEmail === process.env.DEMO_USER_EMAIL;
+    const isDemoUser = false;
 
     if (type === "user.created" || type === "user.updated") {
       await prisma.user.upsert({

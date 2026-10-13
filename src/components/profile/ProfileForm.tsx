@@ -27,7 +27,7 @@ export function ProfileForm() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
-  const [dataSource, setDataSource] = useState<"db" | "fallback" | "demo">("fallback");
+  const [dataSource, setDataSource] = useState<"db" | "fallback">("fallback");
   const [newSkillInput, setNewSkillInput] = useState("");
   const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -206,10 +206,8 @@ export function ProfileForm() {
                 </span>
               ) : dataSource === "db" ? (
                 <DemoBadge label="Cloud Synced" className="bg-green-100 text-[#16A34A] border-green-200" />
-              ) : dataSource === "demo" ? (
-                <DemoBadge label="Demo Account" className="bg-amber-100 text-[#F59E0B] border-amber-200" />
               ) : (
-                <DemoBadge label="Session State" />
+                <DemoBadge label="Active Profile" className="bg-blue-100 text-[#635BFF] border-blue-200" />
               )}
             </div>
             <p className="text-xs text-[#64748B] mt-0.5">

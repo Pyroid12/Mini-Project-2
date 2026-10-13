@@ -1,26 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SignIn, useClerk, useUser } from "@clerk/nextjs";
-import {
-  GraduationCap,
-  ArrowLeft,
-  Sparkles,
-  ArrowRight,
-  Info,
-  AlertCircle,
-  Loader2,
-  ShieldCheck,
-} from "lucide-react";
+import { SignIn, useUser } from "@clerk/nextjs";
+import { GraduationCap, ArrowLeft, Sparkles } from "lucide-react";
 
 export default function SignInPage() {
   const router = useRouter();
-  const clerk = useClerk();
   const { isSignedIn, isLoaded: isUserLoaded } = useUser();
-  const [isDemoLoading, setIsDemoLoading] = useState(false);
-  const [demoError, setDemoError] = useState<string | null>(null);
 
   // If already authenticated, redirect straight to dashboard
   useEffect(() => {
@@ -28,81 +16,6 @@ export default function SignInPage() {
       router.push("/dashboard");
     }
   }, [isUserLoaded, isSignedIn, router]);
-
-  const handleDemoAccess = async () => {
-    setIsDemoLoading(true);
-    setDemoError(null);
-
-    try {
-      const response = await fetch("/api/demo/sign-in", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "Demo access is currently unavailable. Please configure the demo account."
-        );
-      }
-
-      // 1. Primary Strategy: Authenticate ticket directly in browser via Clerk SDK
-      if (clerk.client && data.token) {
-        try {
-          const ticketRes = await clerk.client.signIn.create({
-            strategy: "ticket",
-            ticket: data.token,
-          });
-
-          if (ticketRes.status === "complete" && ticketRes.createdSessionId) {
-            await clerk.setActive({ session: ticketRes.createdSessionId });
-            router.push("/dashboard");
-            router.refresh();
-            return;
-          }
-        } catch (ticketErr) {
-          console.warn("Client ticket sign-in failed, trying credential fallback:", ticketErr);
-        }
-      }
-
-      // 2. Fallback Strategy: Authenticate with demo credentials via Clerk SDK
-      if (clerk.client && data.identifier && data.password) {
-        try {
-          const credRes = await clerk.client.signIn.create({
-            identifier: data.identifier,
-            password: data.password,
-          });
-
-          if (credRes.status === "complete" && credRes.createdSessionId) {
-            await clerk.setActive({ session: credRes.createdSessionId });
-            router.push("/dashboard");
-            router.refresh();
-            return;
-          }
-        } catch (credErr) {
-          console.warn("Client credential demo sign-in failed:", credErr);
-        }
-      }
-
-      throw new Error("Unable to establish demo session. Please check your Clerk dashboard and network connection.");
-    } catch (err) {
-      console.error("Demo access error:", err);
-      setDemoError(err instanceof Error ? err.message : "Demo access failed. Please try again.");
-    } finally {
-      setIsDemoLoading(false);
-    }
-  };
-
-  // Automatically trigger demo access if visited via /sign-in?demo=true
-  useEffect(() => {
-    if (typeof window !== "undefined" && clerk.loaded && !isDemoLoading && !isSignedIn) {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("demo") === "true") {
-        handleDemoAccess();
-      }
-    }
-  }, [clerk.loaded, isDemoLoading, isSignedIn]);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0A0F1D] text-[#172033] dark:text-slate-100 flex flex-col justify-between font-sans selection:bg-[#635BFF]/20 selection:text-[#635BFF]">
@@ -136,63 +49,23 @@ export default function SignInPage() {
               Welcome Back to CareerBuddy AI
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Your AI-powered career and campus placement companion
+              Sign in with your Google account to access your placement preparation workspace
             </p>
           </div>
 
-          {/* Evaluator Demo Access Section */}
-          <div className="p-4 bg-[#EEF0FF] dark:bg-[#635BFF]/10 border border-[#635BFF]/20 rounded-2xl space-y-3">
-            <div className="flex items-start gap-2.5 text-xs">
-              <ShieldCheck className="w-4 h-4 text-[#635BFF] shrink-0 mt-0.5" />
-              <div>
-                <span className="font-semibold text-[#635BFF] block">Evaluator & Demo Access</span>
-                <p className="text-slate-600 dark:text-slate-300 mt-0.5 text-[11px] leading-relaxed">
-                  Explore preloaded engineering roadmap, resume audits, and developer metrics in an authenticated demo session.
-                </p>
-              </div>
+          {/* Genuine Clerk Google Sign-In Component */}
+          <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl p-6 sm:p-8 overflow-hidden">
+            <div className="mb-4 text-center">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#635BFF]">
+                Single Sign-On
+              </span>
             </div>
-
-            <button
-              type="button"
-              onClick={handleDemoAccess}
-              disabled={isDemoLoading}
-              className="w-full py-2.5 px-4 bg-[#635BFF] hover:bg-[#5348E8] disabled:bg-[#635BFF]/60 text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-[#635BFF]/20 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed group"
-            >
-              {isDemoLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Signing in Demo Account...</span>
-                </>
-              ) : (
-                <>
-                  <span>Enter with Demo Student Access</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </>
-              )}
-            </button>
-
-            {demoError && (
-              <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/40 rounded-xl text-xs text-red-600 dark:text-red-300 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{demoError}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="relative flex py-1 items-center">
-            <div className="grow border-t border-slate-200 dark:border-slate-800" />
-            <span className="shrink mx-3 text-slate-400 text-xs font-medium">Or sign in with account</span>
-            <div className="grow border-t border-slate-200 dark:border-slate-800" />
-          </div>
-
-          {/* Genuine Clerk Sign-In Component */}
-          <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl p-4 sm:p-6 overflow-hidden">
             <SignIn
               path="/sign-in"
               routing="path"
               signUpUrl="/sign-up"
               fallbackRedirectUrl="/dashboard"
+              forceRedirectUrl="/dashboard"
               appearance={{
                 variables: {
                   colorPrimary: "#635BFF",
@@ -205,22 +78,30 @@ export default function SignInPage() {
                   header: "hidden",
                   headerTitle: "hidden",
                   headerSubtitle: "hidden",
+                  form: "hidden",
+                  formFieldRow: "hidden",
+                  formButtonPrimary: "hidden",
+                  dividerRow: "hidden",
+                  dividerLine: "hidden",
+                  dividerText: "hidden",
+                  footer: "hidden",
+                  footerAction: "hidden",
                   socialButtonsBlockButton:
-                    "w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800 rounded-xl transition-colors flex items-center justify-center gap-3 shadow-xs",
-                  socialButtonsBlockButtonText: "font-semibold text-xs sm:text-sm",
-                  formButtonPrimary:
-                    "w-full py-2.5 px-4 bg-[#635BFF] hover:bg-[#5348E8] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-[#635BFF]/25 flex items-center justify-center",
-                  formFieldInput:
-                    "w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF]",
-                  formFieldLabel: "block text-xs font-semibold text-slate-700 mb-1",
-                  dividerLine: "border-t border-slate-200",
-                  dividerText: "text-slate-400 text-xs font-medium",
-                  footerActionLink: "text-[#635BFF] font-semibold hover:underline text-xs",
-                  footerActionText: "text-slate-500 text-xs",
-                  identityPreviewEditButton: "text-[#635BFF] text-xs font-semibold",
+                    "w-full py-3.5 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-white rounded-xl transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md cursor-pointer",
+                  socialButtonsBlockButtonText:
+                    "font-semibold text-sm text-slate-800 dark:text-white",
+                  socialButtonsProviderIcon: "w-5 h-5",
                 },
               }}
             />
+          </div>
+
+          {/* Link to sign up */}
+          <div className="text-center text-xs text-slate-500 dark:text-slate-400">
+            Don&apos;t have an account yet?{" "}
+            <Link href="/sign-up" className="text-[#635BFF] font-semibold hover:underline">
+              Create account with Google
+            </Link>
           </div>
 
           <div className="pt-2 text-center text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">

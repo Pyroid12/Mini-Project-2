@@ -111,9 +111,6 @@ You can deploy the backend to Render, Railway, or Fly.io. Example using **Render
    | `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL`| `/dashboard` |
    | `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL`| `/profile` |
    | `AI_SERVER_URL` | `https://careerbuddy-ai-server.onrender.com` (from Step 3) |
-   | `NEXT_PUBLIC_APP_URL` | `https://your-careerbuddy.vercel.app` |
-   | `DEMO_ACCESS_ENABLED` | `true` |
-   | `DEMO_USER_EMAIL` | `demo.student@careerbuddy.ai` |
    | `NEXT_PUBLIC_MOCK_INTERVIEW_URL` | *(Optional)* URL of external mock interview application |
 5. Click **Deploy**.
 6. Once deployed, note your production domain (e.g. `https://your-careerbuddy.vercel.app`).

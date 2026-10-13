@@ -1,22 +1,20 @@
 import { prisma, isDatabaseConnected } from "./prisma";
 import { StudentProfile } from "@/types";
 import { initialProfile } from "./mockData";
-import { DEMO_METADATA_KEY, getAuthContext } from "./auth-utils";
+import { getAuthContext } from "./auth-utils";
 import { currentUser } from "@clerk/nextjs/server";
 
 const inMemoryStore = new Map<string, StudentProfile>();
 
-export const DEMO_PROFILE_FALLBACK: StudentProfile = {
+export const DEFAULT_PROFILE_FALLBACK: StudentProfile = {
   ...initialProfile,
-  fullName: "Demo Student",
-  email: process.env.DEMO_USER_EMAIL || "careerbuddy.demo@example.com",
   completionPercentage: 85,
 };
 
 export async function getProfileForUser(
   clerkUserId: string,
-  isDemoUser: boolean
-): Promise<{ profile: StudentProfile; source: "db" | "fallback" | "demo" }> {
+  isDemoUser = false
+): Promise<{ profile: StudentProfile; source: "db" | "fallback" }> {
   const dbAvailable = await isDatabaseConnected();
 
   if (dbAvailable) {
@@ -77,10 +75,6 @@ export async function getProfileForUser(
     }
   }
 
-  if (isDemoUser) {
-    return { profile: DEMO_PROFILE_FALLBACK, source: "demo" };
-  }
-
   const memoryCached = inMemoryStore.get(clerkUserId);
   if (memoryCached) {
     return { profile: memoryCached, source: "fallback" };
@@ -120,31 +114,6 @@ export async function saveProfileForUser(
   profile: StudentProfile;
 }> {
   const dbAvailable = await isDatabaseConnected();
-
-  if (isDemoUser) {
-    DEMO_PROFILE_FALLBACK.fullName = data.fullName;
-    DEMO_PROFILE_FALLBACK.email = data.email;
-    DEMO_PROFILE_FALLBACK.college = data.college;
-    DEMO_PROFILE_FALLBACK.degree = data.degree;
-    DEMO_PROFILE_FALLBACK.branch = data.branch;
-    DEMO_PROFILE_FALLBACK.currentAcademicYear = data.currentAcademicYear;
-    DEMO_PROFILE_FALLBACK.graduationYear = data.graduationYear;
-    DEMO_PROFILE_FALLBACK.careerGoal = data.careerGoal;
-    DEMO_PROFILE_FALLBACK.technicalSkills = [...data.technicalSkills];
-    DEMO_PROFILE_FALLBACK.githubUsername = data.githubUsername;
-    DEMO_PROFILE_FALLBACK.linkedinUrl = data.linkedinUrl;
-    DEMO_PROFILE_FALLBACK.leetcodeUsername = data.leetcodeUsername;
-    DEMO_PROFILE_FALLBACK.completionPercentage = data.completionPercentage;
-
-    return {
-      saved: true,
-      persisted: false,
-      demoRestricted: true,
-      message:
-        "Demo session: Profile changes applied locally for preview purposes only. Changes are NOT persisted to a real database and will reset on next demo login. Sign up for a free account to save your real profile.",
-      profile: DEMO_PROFILE_FALLBACK,
-    };
-  }
 
   if (dbAvailable) {
     try {

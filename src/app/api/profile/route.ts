@@ -13,12 +13,12 @@ export async function GET() {
     }
 
     const authCtx = await getAuthContext();
-    const { profile, source } = await getProfileForUser(userId, authCtx.isDemoUser);
+    const { profile, source } = await getProfileForUser(userId);
 
     return NextResponse.json({
       profile,
       meta: {
-        isDemoUser: authCtx.isDemoUser,
+        isDemoUser: false,
         dataSource: source,
       },
     });
@@ -98,12 +98,12 @@ export async function POST(request: Request) {
       completionPercentage,
     };
 
-    const result = await saveProfileForUser(userId, authCtx.isDemoUser, profileToSave);
+    const result = await saveProfileForUser(userId, false, profileToSave);
 
     return NextResponse.json({
       success: result.saved,
       persisted: result.persisted,
-      demoRestricted: result.demoRestricted,
+      demoRestricted: false,
       message: result.message,
       profile: result.profile,
     });

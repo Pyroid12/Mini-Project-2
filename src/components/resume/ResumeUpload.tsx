@@ -12,7 +12,6 @@ import {
   FileText,
 } from "lucide-react";
 import { aiFetch, aiUpload } from "@/lib/ai-client";
-import { DemoBadge } from "@/components/common/DemoBadge";
 
 interface ResumeAnalysisData {
   id: string;
@@ -38,7 +37,6 @@ export function ResumeUpload() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<ResumeAnalysisData | null>(null);
   const [history, setHistory] = useState<ResumeAnalysisData[]>([]);
-  const [demoRestricted, setDemoRestricted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [targetRole, setTargetRole] = useState("");
 
@@ -132,12 +130,10 @@ export function ResumeUpload() {
 
       const res = await aiUpload<{
         analysis: ResumeAnalysisData;
-        demoRestricted: boolean;
       }>("/api/ai/resume-analyze", formData);
 
       setAnalysisResult(res.analysis);
       setHistory((prev) => [res.analysis, ...prev.filter((item) => item.id !== res.analysis.id)]);
-      setDemoRestricted(res.demoRestricted);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Failed to analyze resume. Please try again.");
       setAnalysisResult(null);
@@ -150,7 +146,6 @@ export function ResumeUpload() {
     setSelectedFile(null);
     setAnalysisResult(null);
     setErrorMessage(null);
-    setDemoRestricted(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -289,7 +284,6 @@ export function ResumeUpload() {
               <h3 className="text-base font-bold text-[#172033]">
                 Resume Analysis Results
               </h3>
-              {demoRestricted && <DemoBadge label="Demo Session" />}
             </div>
             <button
               onClick={clearSelection}

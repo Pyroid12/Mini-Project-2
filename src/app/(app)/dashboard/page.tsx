@@ -17,7 +17,6 @@ import { Linkedin } from "@/components/common/Icons";
 import { StatCard } from "@/components/common/StatCard";
 import { SectionCard } from "@/components/common/SectionCard";
 import { EmptyState } from "@/components/common/EmptyState";
-import { DemoBadge } from "@/components/common/DemoBadge";
 import { aiFetch } from "@/lib/ai-client";
 
 interface RoadmapProgress {
@@ -64,7 +63,6 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [demoRestricted, setDemoRestricted] = useState(false);
 
   const firstName =
     user?.firstName ||
@@ -75,12 +73,11 @@ export default function DashboardPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await aiFetch<{ summary: DashboardSummary; demoRestricted: boolean }>(
+        const res = await aiFetch<{ summary: DashboardSummary }>(
           "/api/dashboard/summary"
         );
         if (cancelled) return;
         setSummary(res.summary);
-        setDemoRestricted(res.demoRestricted);
       } catch (e) {
         if (cancelled) return;
         setError(e instanceof Error ? e.message : "Failed to load dashboard.");
@@ -102,7 +99,6 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold tracking-tight text-[#172033]">
               Welcome back, {firstName}! 👋
             </h1>
-            {demoRestricted && <DemoBadge label="Demo Mode" />}
           </div>
           <p className="text-xs sm:text-sm text-[#64748B]">
             Here is your personalized placement preparation status and today&apos;s priority milestones.

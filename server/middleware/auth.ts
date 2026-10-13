@@ -50,17 +50,9 @@ export async function requireAuth(
       return res.status(401).json({ error: "Invalid session token" });
     }
 
-    let isDemoUser = false;
+    const isDemoUser = false;
     let email: string | null = null;
     let fullName: string | null = null;
-
-    // Check if this authenticated user is the dedicated demo account
-    const demoId = process.env.DEMO_USER_CLERK_ID;
-    if (demoId && userId === demoId) {
-      isDemoUser = true;
-      email = process.env.DEMO_USER_EMAIL || null;
-      fullName = "Demo Student";
-    }
 
     try {
       const user = await clerkClient.users.getUser(userId);
@@ -72,17 +64,11 @@ export async function requireAuth(
       if (!email) email = primaryEmail;
       const fallbackName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
       if (!fullName) fullName = user.fullName || fallbackName || null;
-      if (!isDemoUser) {
-        isDemoUser =
-          Boolean((user.privateMetadata as Record<string, unknown>)?.isDemoUser) ||
-          Boolean((user.publicMetadata as Record<string, unknown>)?.isDemoUser) ||
-          (Boolean(process.env.DEMO_USER_EMAIL) && primaryEmail === process.env.DEMO_USER_EMAIL);
-      }
     } catch {
       // If Clerk API fails to fetch profile, proceed with the verified userId
     }
 
-    req.auth = { userId, isDemoUser, email, fullName };
+    req.auth = { userId, isDemoUser: false, email, fullName };
     return next();
   } catch (err) {
     console.warn("[server/auth] Token verification failed:", err);

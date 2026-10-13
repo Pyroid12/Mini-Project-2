@@ -16,11 +16,9 @@ import {
   LogOut,
   UserCircle2,
   Loader2,
-  ShieldCheck,
   ExternalLink,
 } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
-import { DemoBadge } from "@/components/common/DemoBadge";
 import { applyTheme, isDarkModeActive, THEME_CHANGE_EVENT } from "@/lib/theme";
 
 interface AppHeaderProps {
@@ -47,14 +45,6 @@ export function AppHeader({ onOpenMobileMenu }: AppHeaderProps) {
     window.addEventListener(THEME_CHANGE_EVENT, onThemeChange);
     return () => window.removeEventListener(THEME_CHANGE_EVENT, onThemeChange);
   }, []);
-
-  const isDemoUser =
-    isLoaded &&
-    user &&
-    Boolean(
-      (user.publicMetadata as Record<string, unknown>)?.isDemoUser ||
-        process.env.NEXT_PUBLIC_DEMO_EMAIL === user.primaryEmailAddress?.emailAddress
-    );
 
   const getPageInfo = () => {
     switch (pathname) {
@@ -230,21 +220,12 @@ export function AppHeader({ onOpenMobileMenu }: AppHeaderProps) {
                       <p className="text-sm font-bold text-[#172033] truncate">
                         {displayName}
                       </p>
-                      {isDemoUser && <DemoBadge label="Demo" />}
                     </div>
                     <p className="text-[11px] text-[#64748B] truncate mt-0.5">
                       {user?.primaryEmailAddress?.emailAddress}
                     </p>
                   </div>
                 </div>
-                {isDemoUser && (
-                  <div className="mt-3 p-2.5 bg-[#EEF0FF] border border-[#635BFF]/20 rounded-lg flex items-start gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#635BFF] shrink-0 mt-0.5" />
-                    <p className="text-[10px] text-[#64748B] leading-relaxed">
-                      Demo mode: edits apply locally and are not permanently stored.
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div className="py-1.5">

@@ -33,16 +33,12 @@ export async function getAuthContext(): Promise<AuthContext> {
     (e) => e.id === user.primaryEmailAddressId
   )?.emailAddress;
 
-  const isDemoUser = Boolean(
-    user.privateMetadata?.[DEMO_METADATA_KEY] ||
-      user.publicMetadata?.[DEMO_METADATA_KEY] ||
-      primaryEmail === process.env.DEMO_USER_EMAIL
-  );
+  const isDemoUser = false;
 
   return {
     userId: user.id,
     isAuthenticated: true,
-    isDemoUser,
+    isDemoUser: false,
     email: primaryEmail ?? null,
     firstName: user.firstName,
     lastName: user.lastName,
@@ -59,5 +55,5 @@ export function getInitials(name: string | null): string {
 }
 
 export function isDemoEnabled(): boolean {
-  return process.env.DEMO_ACCESS_ENABLED !== "false";
+  return false;
 }

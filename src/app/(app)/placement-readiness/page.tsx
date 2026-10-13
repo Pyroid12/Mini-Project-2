@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionCard } from "@/components/common/SectionCard";
-import { DemoBadge } from "@/components/common/DemoBadge";
 import { aiFetch } from "@/lib/ai-client";
 import { mockPlacementReadiness } from "@/lib/mockData";
 

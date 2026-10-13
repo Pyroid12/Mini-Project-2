@@ -18,13 +18,11 @@ import {
   GraduationCap,
   Sparkles,
   X,
-  ShieldCheck,
   LogOut,
   Loader2,
 } from "lucide-react";
 import { Linkedin } from "@/components/common/Icons";
 import { cn, getInitials } from "@/lib/utils";
-import { DemoBadge } from "@/components/common/DemoBadge";
 
 interface NavItem {
   name: string;
@@ -64,15 +62,6 @@ export function AppSidebar({
   const { signOut } = useClerk();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
-
-  const isDemoUser =
-    isLoaded &&
-    user &&
-    Boolean(
-      (user.publicMetadata as Record<string, unknown>)?.isDemoUser ||
-        process.env.NEXT_PUBLIC_DEMO_EMAIL ===
-          user.primaryEmailAddress?.emailAddress
-    );
 
   const displayName = user?.fullName || user?.firstName || "Student";
   const initials = getInitials(displayName);
@@ -217,25 +206,6 @@ export function AppSidebar({
 
         {/* User Profile Mini Footer */}
         <div className="p-3 border-t border-[#E2E8F0] shrink-0 bg-slate-50/50 space-y-2">
-          {isDemoUser && (!isCollapsed || mobileOpen) && (
-            <div className="p-2.5 bg-[#EEF0FF] border border-[#635BFF]/20 rounded-xl flex items-start gap-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#635BFF] shrink-0 mt-0.5" />
-              <div className="text-[10px] text-[#64748B] leading-relaxed">
-                <p className="font-semibold text-[#635BFF]">Demo Session</p>
-                <p>
-                  Edits preview only.{" "}
-                  <Link
-                    href="/sign-up"
-                    className="font-semibold underline hover:text-[#4539e8]"
-                  >
-                    Sign up
-                  </Link>{" "}
-                  to save.
-                </p>
-              </div>
-            </div>
-          )}
-
           <Link
             href="/profile"
             onClick={() => setMobileOpen(false)}
@@ -270,7 +240,6 @@ export function AppSidebar({
                   <p className="text-xs font-semibold text-[#172033] truncate group-hover:text-[#635BFF] transition-colors">
                     {isLoaded ? displayName : "Loading..."}
                   </p>
-                  {isDemoUser && <DemoBadge label="DEMO" />}
                 </div>
                 <p className="text-[11px] text-[#64748B] truncate mt-0.5">
                   {isLoaded

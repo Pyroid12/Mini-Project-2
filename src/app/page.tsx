@@ -48,8 +48,8 @@ export default function LandingPage() {
             <a href="#benefits" className="hover:text-[#635BFF] transition-colors">
               Benefits
             </a>
-            <Link href="/sign-in?demo=true" className="hover:text-[#635BFF] transition-colors">
-              Explore Demo
+            <Link href="/dashboard" className="hover:text-[#635BFF] transition-colors">
+              Dashboard
             </Link>
           </nav>
 
@@ -189,7 +189,7 @@ export default function LandingPage() {
                     href="/dashboard"
                     className="mt-3 text-xs font-bold text-[#635BFF] flex items-center gap-1 hover:underline"
                   >
-                    <span>Open Live Demo</span>
+                    <span>Open Dashboard</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -459,13 +459,13 @@ export default function LandingPage() {
               <div className="p-4 bg-white rounded-xl border border-[#E2E8F0] flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold text-[#172033]">Ready to explore the dashboard?</div>
-                  <p className="text-[11px] text-[#64748B]">Experience CareerBuddy AI with preloaded demonstration data.</p>
+                  <p className="text-[11px] text-[#64748B]">Prepare for engineering campus placements with CareerBuddy AI.</p>
                 </div>
                 <Link
                   href="/dashboard"
                   className="px-3.5 py-2 rounded-lg bg-[#635BFF] text-white text-xs font-semibold hover:bg-[#5348E8] shrink-0"
                 >
-                  Open Demo
+                  Get Started
                 </Link>
               </div>
             </div>
