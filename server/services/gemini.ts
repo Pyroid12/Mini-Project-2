@@ -60,18 +60,18 @@ async function generateJson<T>(
   systemPrompt: string,
   userPrompt: string,
   validator: (raw: unknown) => T | null,
-  retries = 1
+  retries = 3
 ): Promise<GeminiResult<T>> {
   const genAI = getClient();
-  const configuredModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const configuredModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
   const candidateModels = Array.from(
     new Set([
       configuredModel,
-      "gemini-2.5-flash",
-      "gemini-2.0-flash",
-      "gemini-1.5-flash",
+      "gemini-3.5-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.8-flash",
       "gemini-3.5-flash-lite",
-      "gemini-flash-lite-latest",
+      "gemini-flash-latest",
     ])
   );
 
@@ -84,10 +84,10 @@ async function generateJson<T>(
   }
 
   let lastError: string | undefined;
-  const REQUEST_TIMEOUT_MS = 12_000;
+  const REQUEST_TIMEOUT_MS = 15_000;
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const currentModel = candidateModels[Math.min(attempt, candidateModels.length - 1)];
+  for (let attempt = 0; attempt <= retries && attempt < candidateModels.length; attempt++) {
+    const currentModel = candidateModels[attempt];
     try {
       const result = await genAI.models.generateContent({
         model: currentModel,
@@ -124,18 +124,14 @@ async function generateJson<T>(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       const classified = classifyGeminiError(message);
-      if (
-        classified.includes("authentication failed") ||
-        message.includes("429") ||
-        message.toLowerCase().includes("quota")
-      ) {
+      if (classified.includes("authentication failed")) {
         return { ok: false, error: classified };
       }
       lastError = classified;
     }
   }
 
-  return { ok: false, error: lastError || "AI generation failed after retries." };
+  return { ok: false, error: lastError || "AI generation failed after trying available models." };
 }
 
 export const gemini = { generateJson, isGeminiConfigured };
