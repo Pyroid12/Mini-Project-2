@@ -232,3 +232,60 @@ html.dark ::-webkit-scrollbar-thumb:hover,
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* ============================================================
+   Clerk Single Sign-On (Google-Only) & Footer Color Overrides
+   Completely removes black/dark footer banners and hides email forms
+   ============================================================ */
+.cl-rootBox .cl-card,
+.cl-signIn-root .cl-card,
+.cl-signUp-root .cl-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Enforce Google-only OAuth in UI (hide Clerk email/password fields) */
+.cl-rootBox .cl-form,
+.cl-rootBox .cl-formFieldRow,
+.cl-rootBox .cl-formButtonPrimary,
+.cl-rootBox .cl-dividerRow,
+.cl-signIn-root .cl-form,
+.cl-signUp-root .cl-form,
+.cl-signIn-root .cl-dividerRow,
+.cl-signUp-root .cl-dividerRow {
+  display: none !important;
+}
+
+/* Eliminate black footer background and hide Clerk footer completely */
+.cl-rootBox .cl-footer,
+.cl-rootBox .cl-footerAction,
+.cl-rootBox .cl-footerPages,
+.cl-rootBox .cl-cardFooter,
+.cl-signIn-root .cl-footer,
+.cl-signUp-root .cl-footer,
+.cl-footer,
+.cl-cardFooter,
+.cl-footerAction,
+div[class*="cl-footer"],
+div[class*="cl-cardFooter"],
+div[class*="footerAction"] {
+  display: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+}
+
+/* Fallback: Ensure no dark backgrounds on any child or dev mode banner */
+div[class*="devMode"],
+div[class*="developmentMode"],
+.cl-internal-b3fm6y,
+.cl-rootBox footer,
+.cl-card footer {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #64748B !important;
+}
+
