@@ -6,7 +6,8 @@
     "dev": "concurrently -n next,ai -c blue,magenta \"next dev\" \"npm run dev:ai\"",
     "dev:next": "next dev",
     "dev:ai": "tsx watch server/index.ts",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
