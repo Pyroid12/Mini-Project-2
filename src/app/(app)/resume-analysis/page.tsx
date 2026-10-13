@@ -8,7 +8,6 @@ export default function ResumeAnalysisPage() {
       <PageHeader
         title="Resume Analysis"
         description="Verify ATS readability, analyze section structure, and uncover critical missing keywords for campus placements."
-        showDemoBadge={false}
       />
       <ResumeUpload />
     </div>

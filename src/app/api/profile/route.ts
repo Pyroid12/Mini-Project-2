@@ -18,7 +18,6 @@ export async function GET() {
     return NextResponse.json({
       profile,
       meta: {
-        isDemoUser: false,
         dataSource: source,
       },
     });
@@ -98,12 +97,11 @@ export async function POST(request: Request) {
       completionPercentage,
     };
 
-    const result = await saveProfileForUser(userId, false, profileToSave);
+    const result = await saveProfileForUser(userId, profileToSave);
 
     return NextResponse.json({
       success: result.saved,
       persisted: result.persisted,
-      demoRestricted: false,
       message: result.message,
       profile: result.profile,
     });

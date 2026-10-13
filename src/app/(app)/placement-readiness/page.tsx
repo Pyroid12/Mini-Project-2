@@ -66,7 +66,6 @@ interface PlacementReadinessResponse {
       route: string;
     }[];
   };
-  demoRestricted: boolean;
 }
 
 interface CareerInsightsResponse {

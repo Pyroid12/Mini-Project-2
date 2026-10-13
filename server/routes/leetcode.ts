@@ -36,8 +36,8 @@ router.get(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const progress = await getLeetCodeProgressForUser(userId);
       if (!progress) {
@@ -87,8 +87,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       // Handle raw body or query string fallbacks
       let bodyData = req.body;
@@ -184,8 +184,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const parsed = leetcodeLogProblemSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -304,8 +304,8 @@ router.delete(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const { id } = req.params;
       const existing = await getLeetCodeProgressForUser(userId);
@@ -364,8 +364,8 @@ router.put(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const parsed = leetcodeUpdateGoalSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -418,8 +418,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const parsed = leetcodeManualRequestSchema.safeParse(req.body);
       if (!parsed.success) {

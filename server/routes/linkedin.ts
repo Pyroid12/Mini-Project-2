@@ -21,8 +21,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, isDemoUser, email, fullName } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const parsed = linkedinAnalyzeSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -127,7 +127,6 @@ router.post(
         ok: true,
         analysis,
         savedId: saved.id,
-        demoRestricted: isDemoUser,
       });
     } catch (err) {
       next(err);

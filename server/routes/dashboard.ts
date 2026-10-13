@@ -22,8 +22,8 @@ router.get(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, isDemoUser, email, fullName } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const [
         latestResume,
@@ -132,7 +132,6 @@ router.get(
           leetcodeSolved: leetcode ? leetcode.totalSolved : null,
           recommendedActions,
         },
-        demoRestricted: isDemoUser,
       });
     } catch (err) {
       next(err);

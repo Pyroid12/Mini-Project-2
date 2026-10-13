@@ -20,8 +20,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       let payload = req.body;
       if (typeof payload === "string") {
@@ -126,8 +126,8 @@ router.get(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const analysis = await getLatestGitHubAnalysis(userId);
       return res.status(200).json({

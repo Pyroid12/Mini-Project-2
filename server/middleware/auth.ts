@@ -8,7 +8,6 @@ const clerkClient = createClerkClient({
 export interface AuthenticatedRequest extends Request {
   auth?: {
     userId: string;
-    isDemoUser: boolean;
     email: string | null;
     fullName: string | null;
   };
@@ -50,7 +49,6 @@ export async function requireAuth(
       return res.status(401).json({ error: "Invalid session token" });
     }
 
-    const isDemoUser = false;
     let email: string | null = null;
     let fullName: string | null = null;
 
@@ -68,7 +66,7 @@ export async function requireAuth(
       // If Clerk API fails to fetch profile, proceed with the verified userId
     }
 
-    req.auth = { userId, isDemoUser: false, email, fullName };
+    req.auth = { userId, email, fullName };
     return next();
   } catch (err) {
     console.warn("[server/auth] Token verification failed:", err);

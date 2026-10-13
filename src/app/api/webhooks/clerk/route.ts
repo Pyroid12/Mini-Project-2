@@ -51,8 +51,6 @@ export async function POST(request: Request) {
       data.email_addresses[0]?.email_address ??
       "unknown@example.com";
 
-    const isDemoUser = false;
-
     if (type === "user.created" || type === "user.updated") {
       await prisma.user.upsert({
         where: { clerkUserId: data.id },
@@ -63,7 +61,7 @@ export async function POST(request: Request) {
           firstName: data.first_name ?? undefined,
           lastName: data.last_name ?? undefined,
           imageUrl: data.image_url ?? undefined,
-          isDemoUser,
+          isDemoUser: false,
         },
         update: {
           email: primaryEmail,
@@ -71,7 +69,6 @@ export async function POST(request: Request) {
           firstName: data.first_name ?? undefined,
           lastName: data.last_name ?? undefined,
           imageUrl: data.image_url ?? undefined,
-          isDemoUser,
         },
       });
     } else if (type === "user.deleted") {

@@ -50,8 +50,8 @@ router.post(
         return res.status(400).json({ error: "No resume file uploaded." });
       }
 
-      const { userId, isDemoUser, email, fullName } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const meta = resumeUploadMetaSchema.safeParse({
         targetRole: req.body?.targetRole,
@@ -111,7 +111,6 @@ router.post(
 
       return res.json({
         analysis: saved,
-        demoRestricted: isDemoUser,
         approximateScoreNotice:
           "ATS score is an approximate evaluation and not a guarantee of ATS performance or placement success.",
       });

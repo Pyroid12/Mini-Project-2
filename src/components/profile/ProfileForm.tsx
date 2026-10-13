@@ -14,12 +14,12 @@ import {
   Save,
   RotateCcw,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import { Github, Linkedin } from "@/components/common/Icons";
 import { StudentProfile } from "@/types";
 import { initialProfile } from "@/lib/mockData";
 import { SectionCard } from "@/components/common/SectionCard";
-import { DemoBadge } from "@/components/common/DemoBadge";
 
 export function ProfileForm() {
   const [profile, setProfile] = useState<StudentProfile>(initialProfile);
@@ -205,9 +205,15 @@ export function ProfileForm() {
                   Loading...
                 </span>
               ) : dataSource === "db" ? (
-                <DemoBadge label="Cloud Synced" className="bg-green-100 text-[#16A34A] border-green-200" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-[#16A34A] border border-green-200">
+                  <Check className="w-3 h-3 text-[#16A34A]" />
+                  <span>Cloud Synced</span>
+                </span>
               ) : (
-                <DemoBadge label="Active Profile" className="bg-blue-100 text-[#635BFF] border-blue-200" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-[#635BFF] border border-blue-200">
+                  <Sparkles className="w-3 h-3 text-[#635BFF]" />
+                  <span>Active Profile</span>
+                </span>
               )}
             </div>
             <p className="text-xs text-[#64748B] mt-0.5">

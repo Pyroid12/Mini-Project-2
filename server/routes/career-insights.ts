@@ -26,13 +26,12 @@ router.get(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const latest = await getLatestCareerInsight(userId);
       return res.status(200).json({
         insights: latest,
-        demoRestricted: isDemoUser,
       });
     } catch (err) {
       next(err);
@@ -49,8 +48,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, email, fullName, isDemoUser } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const [resume, profile, roadmaps, github, leetcode] = await Promise.all([
         getLatestResumeAnalysis(userId),
@@ -93,7 +92,6 @@ router.post(
 
       return res.status(200).json({
         insights: saved,
-        demoRestricted: isDemoUser,
       });
     } catch (err) {
       next(err);

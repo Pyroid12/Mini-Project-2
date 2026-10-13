@@ -28,8 +28,8 @@ router.post(
       if (!req.auth) {
         return res.status(401).json({ error: "Authentication required" });
       }
-      const { userId, isDemoUser, email, fullName } = req.auth;
-      await ensureUser(userId, email, fullName, isDemoUser);
+      const { userId, email, fullName } = req.auth;
+      await ensureUser(userId, email, fullName);
 
       const parsed = roadmapGenerateSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -78,7 +78,7 @@ router.post(
         phases: result.data.phases,
       });
 
-      return res.json({ roadmap: saved, demoRestricted: isDemoUser });
+      return res.json({ roadmap: saved });
     } catch (err) {
       next(err);
     }

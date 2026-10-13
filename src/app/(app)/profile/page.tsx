@@ -8,7 +8,6 @@ export default function ProfilePage() {
       <PageHeader
         title="Student Profile"
         description="Manage your academic credentials, career preferences, and connected developer handles."
-        showDemoBadge={false}
       />
       <ProfileForm />
     </div>

@@ -12,8 +12,7 @@ export const DEFAULT_PROFILE_FALLBACK: StudentProfile = {
 };
 
 export async function getProfileForUser(
-  clerkUserId: string,
-  isDemoUser = false
+  clerkUserId: string
 ): Promise<{ profile: StudentProfile; source: "db" | "fallback" }> {
   const dbAvailable = await isDatabaseConnected();
 
@@ -24,9 +23,9 @@ export async function getProfileForUser(
         create: {
           clerkUserId,
           email: (await currentUser())?.emailAddresses?.[0]?.emailAddress ?? "unknown@example.com",
-          isDemoUser,
+          isDemoUser: false,
         },
-        update: { isDemoUser },
+        update: {},
         include: { profile: true },
       });
 
@@ -67,35 +66,26 @@ export async function getProfileForUser(
         linkedinUrl: "",
         leetcodeUsername: "",
         avatarUrl: auth.imageUrl ?? undefined,
-        completionPercentage: 0,
+        completionPercentage: 20,
       };
-      return { profile, source: "fallback" };
+
+      return { profile, source: "db" };
     } catch (err) {
-      console.error("[profile-data] DB read failed, using fallback:", err);
+      console.error("[profile-data] DB lookup failed, falling back to memory:", err);
     }
   }
 
-  const memoryCached = inMemoryStore.get(clerkUserId);
-  if (memoryCached) {
-    return { profile: memoryCached, source: "fallback" };
+  const existing = inMemoryStore.get(clerkUserId);
+  if (existing) {
+    return { profile: existing, source: "fallback" };
   }
 
   const auth = await getAuthContext();
   const fallback: StudentProfile = {
+    ...DEFAULT_PROFILE_FALLBACK,
     fullName: auth.fullName ?? initialProfile.fullName,
     email: auth.email ?? initialProfile.email,
-    college: initialProfile.college,
-    degree: initialProfile.degree,
-    branch: initialProfile.branch,
-    currentAcademicYear: initialProfile.currentAcademicYear,
-    graduationYear: initialProfile.graduationYear,
-    careerGoal: initialProfile.careerGoal,
-    technicalSkills: [...initialProfile.technicalSkills],
-    githubUsername: initialProfile.githubUsername,
-    linkedinUrl: initialProfile.linkedinUrl,
-    leetcodeUsername: initialProfile.leetcodeUsername,
     avatarUrl: auth.imageUrl ?? undefined,
-    completionPercentage: initialProfile.completionPercentage,
   };
 
   inMemoryStore.set(clerkUserId, fallback);
@@ -104,12 +94,10 @@ export async function getProfileForUser(
 
 export async function saveProfileForUser(
   clerkUserId: string,
-  isDemoUser: boolean,
   data: StudentProfile
 ): Promise<{
   saved: boolean;
   persisted: boolean;
-  demoRestricted: boolean;
   message: string;
   profile: StudentProfile;
 }> {
@@ -171,7 +159,6 @@ export async function saveProfileForUser(
       return {
         saved: true,
         persisted: true,
-        demoRestricted: false,
         message: "Profile saved to secure database successfully.",
         profile: {
           fullName: data.fullName,
@@ -198,7 +185,6 @@ export async function saveProfileForUser(
   return {
     saved: true,
     persisted: false,
-    demoRestricted: false,
     message:
       "Saved in current server memory (database not connected). Connect Supabase + run Prisma migration to persist profile data permanently.",
     profile: data,

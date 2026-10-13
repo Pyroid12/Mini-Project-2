@@ -4,7 +4,6 @@ export interface ServerUser {
   clerkUserId: string;
   email: string;
   fullName: string | null;
-  isDemoUser: boolean;
 }
 
 export async function getProfileSnapshot(clerkUserId: string): Promise<{
@@ -39,8 +38,7 @@ export async function getProfileSnapshot(clerkUserId: string): Promise<{
 export async function ensureUser(
   clerkUserId: string,
   email: string | null,
-  fullName: string | null,
-  isDemoUser: boolean
+  fullName: string | null
 ): Promise<ServerUser | null> {
   const dbAvailable = await isDatabaseConnected();
   if (!dbAvailable) {
@@ -48,7 +46,6 @@ export async function ensureUser(
       clerkUserId,
       email: email ?? "unknown@example.com",
       fullName,
-      isDemoUser,
     };
   }
 
@@ -59,19 +56,17 @@ export async function ensureUser(
         clerkUserId,
         email: email ?? "unknown@example.com",
         fullName: fullName ?? undefined,
-        isDemoUser,
+        isDemoUser: false,
       },
       update: {
         email: email ?? undefined,
         fullName: fullName ?? undefined,
-        isDemoUser,
       },
     });
     return {
       clerkUserId: user.clerkUserId,
       email: user.email,
       fullName: user.fullName,
-      isDemoUser: user.isDemoUser,
     };
   } catch (err) {
     console.error("[server/user] upsert failed:", err);
@@ -79,7 +74,6 @@ export async function ensureUser(
       clerkUserId,
       email: email ?? "unknown@example.com",
       fullName,
-      isDemoUser,
     };
   }
 }

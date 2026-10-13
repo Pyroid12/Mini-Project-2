@@ -1,11 +1,9 @@
 import React from "react";
-import { DemoBadge } from "./DemoBadge";
 
 interface PageHeaderProps {
   title: string;
   description?: string;
   badge?: string;
-  showDemoBadge?: boolean;
   children?: React.ReactNode;
 }
 
@@ -13,7 +11,6 @@ export function PageHeader({
   title,
   description,
   badge,
-  showDemoBadge = false,
   children,
 }: PageHeaderProps) {
   return (
@@ -26,7 +23,6 @@ export function PageHeader({
               {badge}
             </span>
           )}
-          {showDemoBadge && <DemoBadge />}
         </div>
         {description && <p className="text-sm text-[#64748B] mt-1">{description}</p>}
       </div>
