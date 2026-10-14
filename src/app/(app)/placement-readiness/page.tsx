@@ -96,7 +96,22 @@ export default function PlacementReadinessPage() {
       try {
         const res = await aiFetch<PlacementReadinessResponse>("/api/placement-readiness");
         if (!cancelled && res.readiness) {
-          setReadinessData(res.readiness);
+          const rd = res.readiness;
+          const connected =
+            rd.factors?.filter((f) => f.status === "Connected").length ??
+            rd.breakdown?.connectedPillars ??
+            0;
+          if (connected === 0) {
+            rd.overallScore = 0;
+            if (rd.companyTiers) {
+              rd.companyTiers = rd.companyTiers.map((t) => ({
+                ...t,
+                readiness: 0,
+                status: "Needs Practice" as const,
+              }));
+            }
+          }
+          setReadinessData(rd);
         }
       } catch (err: any) {
         if (!cancelled) {
@@ -142,7 +157,7 @@ export default function PlacementReadinessPage() {
   };
 
   // Fallback values if API is loading or initial setup
-  const readiness = readinessData || {
+  const rawReadiness = readinessData || {
     overallScore: mockPlacementReadiness.overallScore,
     resumeScore: mockPlacementReadiness.resumeScore,
     skillsScore: 78,
@@ -206,6 +221,22 @@ export default function PlacementReadinessPage() {
       ...a,
       impact: (a.impact === "High" ? "High" : "Medium") as "High" | "Medium",
     })),
+  };
+
+  const isZeroConnected =
+    (readinessData?.breakdown?.connectedPillars === 0) ||
+    (readinessData?.factors?.every((f) => f.status === "Pending Data") ?? false);
+
+  const readiness = {
+    ...rawReadiness,
+    overallScore: isZeroConnected ? 0 : rawReadiness.overallScore,
+    companyTiers: isZeroConnected
+      ? rawReadiness.companyTiers.map((t) => ({
+          ...t,
+          readiness: 0,
+          status: "Needs Practice" as const,
+        }))
+      : rawReadiness.companyTiers,
   };
 
   return (
