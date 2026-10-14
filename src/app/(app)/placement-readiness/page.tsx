@@ -282,8 +282,20 @@ export default function PlacementReadinessPage() {
 
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-[#16A34A] border border-green-200">
-                    {readiness.overallScore >= 75
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                      readiness.breakdown.connectedPillars === 0 || readiness.overallScore === 0
+                        ? "bg-slate-100 text-slate-600 border border-slate-200"
+                        : readiness.overallScore >= 75
+                        ? "bg-green-100 text-[#16A34A] border border-green-200"
+                        : readiness.overallScore >= 60
+                        ? "bg-blue-100 text-blue-700 border border-blue-200"
+                        : "bg-amber-100 text-amber-700 border border-amber-200"
+                    }`}
+                  >
+                    {readiness.breakdown.connectedPillars === 0 || readiness.overallScore === 0
+                      ? "Not Started"
+                      : readiness.overallScore >= 75
                       ? "Placement Qualified"
                       : readiness.overallScore >= 60
                       ? "On Track"
@@ -298,9 +310,10 @@ export default function PlacementReadinessPage() {
                 </h3>
                 <p className="text-xs text-[#64748B] max-w-xl mt-1 leading-relaxed">
                   Synthesized across {readiness.breakdown.connectedPillars} of{" "}
-                  {readiness.breakdown.totalPillars} available data sources. Completing roadmap
-                  phases and increasing LeetCode Medium problem practice will qualify you for top-bracket
-                  Tier 1 product engineering roles.
+                  {readiness.breakdown.totalPillars} available data sources.{" "}
+                  {readiness.breakdown.connectedPillars === 0
+                    ? "Connect your resume, technical skills, roadmap, or coding accounts to compute your placement readiness."
+                    : "Completing roadmap phases and increasing LeetCode Medium problem practice will qualify you for top-bracket Tier 1 product engineering roles."}
                 </p>
               </div>
             </div>

@@ -195,8 +195,8 @@ export function calculatePlacementReadiness(data: ReadinessInput): PlacementRead
   let overallScore = 0;
 
   if (activeFactors.length === 0) {
-    // If no data has been connected at all yet, provide an initial baseline of 50 with Preliminary confidence
-    overallScore = 50;
+    // For a brand new account with 0 connected pillars, the baseline index is 0%
+    overallScore = 0;
   } else {
     const totalActiveWeight = activeFactors.reduce((sum, f) => sum + f.weight, 0);
     const weightedSum = activeFactors.reduce((sum, f) => sum + f.score * f.weight, 0);
@@ -216,24 +216,24 @@ export function calculatePlacementReadiness(data: ReadinessInput): PlacementRead
   const companyTiers: CompanyTierFit[] = [
     {
       tier: "Tier 1 Product Companies (FAANG / Big Tech)",
-      readiness: Math.max(30, Math.min(95, Math.round(overallScore * 0.9))),
+      readiness: activeFactors.length === 0 ? 0 : Math.max(0, Math.min(95, Math.round(overallScore * 0.9))),
       description: "Requires advanced Graph/Tree DSA mastery, strong ATS resume, and clean architectural design.",
       targetRoles: "Software Development Engineer, Systems Engineer",
-      status: overallScore >= 82 ? "Ready" : overallScore >= 65 ? "On Track" : "Needs Practice",
+      status: activeFactors.length === 0 ? "Needs Practice" : overallScore >= 82 ? "Ready" : overallScore >= 65 ? "On Track" : "Needs Practice",
     },
     {
       tier: "Tier 2 Mid-Size & Tech Unicorns",
-      readiness: Math.max(35, Math.min(98, Math.round(overallScore * 1.05))),
+      readiness: activeFactors.length === 0 ? 0 : Math.max(0, Math.min(98, Math.round(overallScore * 1.05))),
       description: "Great fit for balanced full-stack engineering, API design, and solid problem-solving fundamentals.",
       targetRoles: "Full-Stack Engineer, Backend Engineer",
-      status: overallScore >= 75 ? "Ready" : overallScore >= 55 ? "On Track" : "Needs Practice",
+      status: activeFactors.length === 0 ? "Needs Practice" : overallScore >= 75 ? "Ready" : overallScore >= 55 ? "On Track" : "Needs Practice",
     },
     {
       tier: "High-Growth Tech & AI Startups",
-      readiness: Math.max(40, Math.min(99, Math.round(overallScore * 1.12))),
+      readiness: activeFactors.length === 0 ? 0 : Math.max(0, Math.min(99, Math.round(overallScore * 1.12))),
       description: "Prioritizes practical project shipping speed, GitHub portfolio, and modern framework proficiency.",
       targetRoles: "Product Engineer, Founding Engineer",
-      status: overallScore >= 70 ? "Ready" : "On Track",
+      status: activeFactors.length === 0 ? "Needs Practice" : overallScore >= 70 ? "Ready" : overallScore >= 50 ? "On Track" : "Needs Practice",
     },
   ];
 
